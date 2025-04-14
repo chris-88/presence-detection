@@ -104,15 +104,26 @@ fi
 
 # Upload project files
 section "Uploading Project Files"
+
 for file in "${PROJECT_FILES[@]}"; do
   if [ -e "$file" ]; then
     info "Uploading $file..."
-    mpremote connect $PORT fs cp -r $file :
+    if [ "$file" == "boot.py" ]; then
+      mpremote connect $PORT fs cp $file :boot_temp.py
+    else
+      mpremote connect $PORT fs cp -r $file :
+    fi
     success "Uploaded $file"
   else
     error_exit "Project file missing: $file"
   fi
 done
+
+# Rename boot_temp.py to boot.py
+section "Finalizing Boot File"
+mpremote connect $PORT fs mv boot_temp.py boot.py
+success "Boot file finalized."
+
 
 # Reset device
 section "Resetting Device"

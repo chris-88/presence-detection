@@ -1,6 +1,7 @@
 import socket
 import struct
 import network
+import time  # ADD THIS
 
 AP_IP = "192.168.4.1"
 
@@ -28,3 +29,5 @@ def start_dns_server():
                 s.sendto(response, addr)
         except Exception as e:
             print('DNS server error:', e)
+
+        time.sleep(0.05)  # ADD THIS — yield CPU every loop

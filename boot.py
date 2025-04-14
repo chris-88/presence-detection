@@ -8,8 +8,6 @@ from lib import config_manager
 from lib import webserver
 from lib import dnsserver
 
-cfg = config_manager.ConfigManager()
-
 AP_IP = "192.168.4.1"
 
 def start_access_point():
