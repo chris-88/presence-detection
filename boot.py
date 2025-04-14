@@ -73,9 +73,13 @@ def main():
             print("Wi-Fi connected, checking for firmware updates...")
             check_firmware_update(cfg.get_version())
 
-            # Wi-Fi good, OTA check good, continue to main app
-            import main as app_main
-            app_main.main()
+            # Wi-Fi good, OTA check good, now launch main app
+            try:
+                import main as app_main
+                app_main.main()
+            except Exception as e:
+                print("Main app crashed:", e)
+
         else:
             print("Wi-Fi connection failed, starting captive portal...")
             start_captive_portal()

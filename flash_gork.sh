@@ -11,6 +11,7 @@ FIRMWARE="ESP32_GENERIC-20241129-v1.24.1.bin"
 BAUD=460800
 PROJECT_FILES=(lib main.py boot.py)
 BACKUP_DIR="backup_$(date +%Y%m%d_%H%M%S)"
+DUMMY_BOOT="boot_dummy.py"
 
 # Colors
 RED='\033[0;31m'
@@ -102,33 +103,33 @@ else
   info "Skipping firmware flashing."
 fi
 
+# Upload dummy boot.py
+section "Uploading Dummy Boot"
+info "Uploading $DUMMY_BOOT as boot.py..."
+mpremote connect $PORT fs cp "$DUMMY_BOOT" :boot.py
+success "Dummy boot.py uploaded."
+
+info "Waiting for dummy boot to settle..."
+sleep_with_dots 5
+
 # Upload project files
 section "Uploading Project Files"
 
 for file in "${PROJECT_FILES[@]}"; do
   if [ -e "$file" ]; then
     info "Uploading $file..."
-    if [ "$file" == "boot.py" ]; then
-      mpremote connect $PORT fs cp $file :boot_temp.py
-    else
-      mpremote connect $PORT fs cp -r $file :
-    fi
+    mpremote connect $PORT fs cp -r "$file" :
+    sleep 1  # Small delay between uploads
     success "Uploaded $file"
   else
     error_exit "Project file missing: $file"
   fi
 done
 
-# Rename boot_temp.py to boot.py
-section "Finalizing Boot File"
-mpremote connect $PORT fs mv boot_temp.py boot.py
-success "Boot file finalized."
-
-
 # Reset device
 section "Resetting Device"
 { mpremote connect $PORT reset > /dev/null 2>&1 || true; }
-success "Device reset command sent. Device may now be busy starting Wi-Fi setup."
+success "Device reset command sent. Device may now be booting into setup mode."
 
 # Done
 END_TIME=$(date +%s)
