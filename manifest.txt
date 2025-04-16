@@ -1,8 +1,7 @@
 boot.py
 main.py
+version.txt
 lib/config_manager.py
-lib/dnsserver.py
-lib/mqtt_client.py
 lib/ota_updater.py
 lib/task.py
 lib/tasks/presence_task.py
